@@ -12,8 +12,10 @@ with open(oauth_providers_path) as oauth_fp:
 class HtmlExtractor:
     def __init__(self, oauth_providers=OAUTH_PROVIDERS):
         self.oauth_providers = oauth_providers
-        # Update the instantiation of analyzers to match the revised constructors
-        self.element_analyzer = ElementAnalyzer(keywords=['login', 'sign in', 'signin', 'username', 'password'], oauth_providers=self.oauth_providers)
+        self.element_analyzer = ElementAnalyzer(
+            keywords=['login', 'sign in', 'signin', 'username', 'password', 'continue', 'next'],
+            oauth_providers=self.oauth_providers
+        )
         self.form_analyzer = FormAnalyzer()
 
     def extract_relevant_html(self, html_content):
@@ -22,13 +24,11 @@ class HtmlExtractor:
         extracted_elements = []
 
         # Extract and analyze forms
-        forms = soup.find_all('form')
-        for form in forms:
-            form_details = self.form_analyzer.extract_forms(soup)
-            login_form = self.form_analyzer.extract_login_form()
-            if login_form:
-                xpath = self.generate_xpath(form)
-                extracted_elements.append(f"<!-- LOGIN FORM --> {login_form} | XPath: {xpath}")
+        form_data = self.form_analyzer.extract_forms(soup)
+        login_form = self.form_analyzer.extract_login_form(form_data)
+        if login_form:
+            xpath = self.generate_xpath(BeautifulSoup(login_form['form_html'], 'html.parser').form)
+            extracted_elements.append(f"<!-- LOGIN FORM --> {login_form} | XPath: {xpath}")
 
         # Extract and analyze individual elements using ElementAnalyzer
         for tag in self.element_analyzer.relevant_tags:
@@ -37,7 +37,8 @@ class HtmlExtractor:
                 analyzed_element = self.element_analyzer.analyze_element(element)
                 if analyzed_element['score'] > 0:  # Only include relevant elements with a positive score
                     xpath = self.generate_xpath(element)
-                    extracted_elements.append(f"<!-- RELEVANT ELEMENT --> {str(analyzed_element['element'])} | XPath: {xpath}")
+                    extracted_elements.append(
+                        f"<!-- RELEVANT ELEMENT --> {str(analyzed_element['element'])} | XPath: {xpath}")
 
         # Add generalized xpaths to catch common buttons like "Next" or "Sign in"
         for xpath in self.element_analyzer.generalized_xpaths:
@@ -51,15 +52,21 @@ class HtmlExtractor:
         components = []
         for parent in element.parents:
             siblings = parent.find_all(element.name, recursive=False)
-            if len(siblings) > 1:
-                idx = siblings.index(element) + 1
-                components.append(f"{element.name}[{idx}]")
+            idx = 1  # XPath indices are 1-based
+
+            # Iterate through siblings and find the index of the current element
+            for sibling in siblings:
+                if sibling == element:
+                    components.append(f"{element.name}[{idx}]")
+                    break
+                idx += 1
             else:
+                # If there is only one element of that type, no index is needed
                 components.append(element.name)
+
         components.reverse()
         return "/" + "/".join(components)
 
 
 if __name__ == "__main__":
     pass
-

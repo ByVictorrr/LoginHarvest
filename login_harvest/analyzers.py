@@ -2,6 +2,14 @@ class ElementAnalyzer:
     def __init__(self, keywords, oauth_providers):
         self.keywords = keywords
         self.oauth_providers = oauth_providers
+        self.relevant_tags = ['input', 'button', 'a', 'iframe', 'div']
+        # Add generalized xpaths to be used for common elements like "Next" or "Sign in"
+        self.generalized_xpaths = [
+            "//*[contains(text(),'Next')]",
+            "//*[contains(text(),'Sign in')]",
+            "//*[contains(text(),'Login')]",
+            "//*[contains(text(),'Continue')]"
+        ]
 
     def analyze_element(self, element):
         """Analyze the element to determine its relevance and assign a score."""
@@ -33,12 +41,11 @@ class ElementAnalyzer:
 
 
 class FormAnalyzer:
-    def __init__(self, soup):
-        self.soup = soup
 
-    def extract_forms(self):
+    @staticmethod
+    def extract_forms(soup):
         """Extract forms along with their input elements and buttons."""
-        forms = self.soup.find_all('form')
+        forms = soup.find_all('form')
         form_data = []
         for form in forms:
             form_inputs = form.find_all(['input', 'button', 'select', 'textarea'])
@@ -55,12 +62,11 @@ class FormAnalyzer:
             form_data.append(form_details)
         return form_data
 
-    def extract_login_form(self):
+    def extract_login_form(self, form_data):
         """Heuristically identify the most likely login form based on its fields."""
-        forms = self.extract_forms()
         login_form = None
         highest_score = 0
-        for form in forms:
+        for form in form_data:
             form_score = self._calculate_form_score(form['fields'])
             if form_score > highest_score:
                 highest_score = form_score

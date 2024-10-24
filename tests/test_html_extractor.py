@@ -19,7 +19,7 @@ class TestHtmlExtractorWithUrls(unittest.TestCase):
         for url in LOGIN_URLS:
             with self.subTest(url=url):
                 try:
-                    response = requests.get(url, timeout=10)
+                    response = requests.get(url, timeout=10, verify=False)
                     response.raise_for_status()  # Ensure we got a valid response
 
                     html_content = response.text
@@ -27,6 +27,12 @@ class TestHtmlExtractorWithUrls(unittest.TestCase):
 
                     # Check if extraction provides some relevant output (not empty)
                     self.assertTrue(len(extracted_content) > 0, f"No relevant content extracted from {url}")
+
+                except requests.exceptions.HTTPError as e:
+                    if response.status_code == 503:
+                        self.skipTest(f"Skipping test for {url} due to server unavailability (503).")
+                    else:
+                        self.fail(f"Request to {url} failed: {e}")
 
                 except requests.exceptions.RequestException as e:
                     self.fail(f"Request to {url} failed: {e}")
