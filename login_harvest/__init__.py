@@ -1,1 +1,1 @@
-from .extractor import HtmlExtractor
+from .extractor import HtmlExtractor, OAUTH_PROVIDERS
