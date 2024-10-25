@@ -18,6 +18,9 @@ classifiers = [
 [tool.setuptools.packages.find]
 where = ["login_harvest"]
 
+[tool.setuptools]
+include-package-data = true
+
 [tool.setuptools.package_data]
 "login_harvest" = ["*.json"]
 
