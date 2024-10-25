@@ -34,7 +34,7 @@ jobs:
       run: |
         python -m twine upload dist/*
 
-      - name: Test installation
+    - name: Test installation
       run: |
         pip install dist/*.whl
         python -c "import login_harvest"
