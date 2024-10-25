@@ -23,6 +23,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install build twine
 
+    - name: Ensure MANIFEST.in is present
+      run: |
+        test -f MANIFEST.in || (echo "MANIFEST.in not found"; exit 1)
+
     - name: Build the package
       run: |
         python -m build
