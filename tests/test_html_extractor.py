@@ -51,6 +51,8 @@ class TestHtmlExtractorWithUrls(unittest.TestCase):
 
                         # Check if extraction provides some relevant output (not empty)
                         self.assertTrue(len(extracted_content) > 0, f"No relevant content extracted from {url}")
+                        self.assertTrue(len(extracted_content) < 100000,
+                                        f"Relevant content extract from {url} exceeds 10k")
 
                 except httpx.HTTPStatusError as e:
                     if e.response.status_code == 503:
