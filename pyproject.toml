@@ -14,12 +14,10 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent"
 ]
+package-data = { "login_harvest" = ["*.json"] }
 
 [tool.setuptools.packages.find]
 where = ["login_harvest"]
-
-[tool.setuptools.package_data]
-"login_harvest" = ["*.json"]
 
 [tool.pytest.ini_options]
 python_requires = ">=3.12"
