@@ -11,6 +11,9 @@ setup(
     url="https://github.com/ByVictorrr/LoginHarvest",
     packages=find_packages(),
     include_package_data=True,
+    package_data={
+        'login_harvest': ['oauth_providers.json'],
+    },
     install_requires=[
         'beautifulsoup4',
     ],
