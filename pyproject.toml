@@ -6,10 +6,10 @@ build-backend = "setuptools.build_meta"
 name = "login-harvest"
 version = "0.0.1a"
 description = "A library to extract login-related HTML elements from web pages."
-authors = [{ name = "Victor DeLaplaine", email = "auth.sentry@gmail.com" }]
+authors = [{ name = "Victor Delaplaine", email = "auth.sentry@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["beautifulsoup4",]
+dependencies = ["beautifulsoup4", ]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent"
@@ -18,8 +18,6 @@ classifiers = [
 [tool.setuptools.packages.find]
 where = ["login_harvest"]
 
-[tool.setuptools]
-package-data = { "login_harvest" = ["*.json"] }
+[tool.setuptools.package_data]
+"login_harvest" = ["*.json"]
 
-[tool.pytest.ini_options]
-python_requires = ">=3.12"
