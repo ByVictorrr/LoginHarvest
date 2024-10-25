@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "login-harvest"
-version = "0.0.1a3"
+version = "0.0.1a4"
 description = "A library to extract login-related HTML elements from web pages."
 authors = [{ name = "Victor DeLaplaine", email = "auth.sentry@gmail.com" }]
 readme = "README.md"
@@ -16,7 +16,7 @@ classifiers = [
 ]
 
 [tool.setuptools.packages.find]
-where = ["login_harvest"]
+where = ["."]
 
 [tool.setuptools]
 include-package-data = true
