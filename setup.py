@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='html-extractor',
+    name='login-harvest',
     version='0.1.0',
     author='Victor Delaplaine',
     author_email='auth.sentry@egmail.com.com',
