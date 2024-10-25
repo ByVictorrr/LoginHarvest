@@ -9,9 +9,11 @@ description = "A library to extract login-related HTML elements from web pages."
 authors = [{ name = "Victor DeLaplaine", email = "auth.sentry@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["beautifulsoup4", "httpx", "fake_useragent"]
-long-description = "file: README.md"
-long-description-content-type = "text/markdown"
+dependencies = ["beautifulsoup4",]
+
+[tool.setuptools]
+long_description = "file: README.md"
+long_description_content_type = "text/markdown"
 url = "https://github.com/ByVictorrr/LoginHarvest"
 
 [tool.setuptools.packages.find]
