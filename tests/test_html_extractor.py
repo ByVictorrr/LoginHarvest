@@ -1,9 +1,9 @@
 import unittest
 import json
 import httpx
-from login_harvest import HtmlExtractor, OAUTH_PROVIDERS
 from fake_useragent import UserAgent
 import time
+from login_harvest import LoginHarvest
 
 # Load login URLs from JSON file
 with open("login_urls.json") as f:
@@ -29,11 +29,7 @@ def create_header(website_url):
         "sec-fetch-dest": "document",
     }
 
-class TestHtmlExtractorWithUrls(unittest.TestCase):
-
-    def setUp(self):
-        """Set up the HtmlExtractor instance for testing."""
-        self.extractor = HtmlExtractor(oauth_providers=OAUTH_PROVIDERS)
+class TestLoginHarvestWithUrls(unittest.TestCase):
 
     def test_extract_from_login_pages(self):
         """Test extracting login elements from the given list of URLs."""
@@ -47,12 +43,16 @@ class TestHtmlExtractorWithUrls(unittest.TestCase):
                         response.raise_for_status()  # Ensure we got a valid response
 
                         html_content = response.text
-                        extracted_content = self.extractor.extract_relevant_html(html_content)
+
+                        # Instantiate LoginHarvest with HTML content and analyze it
+                        harvest = LoginHarvest(html_content)
+                        extracted_data = harvest.analyze_login_form()
 
                         # Check if extraction provides some relevant output (not empty)
-                        self.assertTrue(len(extracted_content) > 0, f"No relevant content extracted from {url}")
-                        self.assertTrue(len(extracted_content) < 100000,
-                                        f"Relevant content extract from {url} exceeds 10k")
+                        self.assertTrue(len(extracted_data['form_elements']['inputs']) > 0, f"No input fields extracted from {url}")
+                        self.assertTrue(len(extracted_data['form_elements']['buttons']) > 0, f"No buttons extracted from {url}")
+                        self.assertTrue(len(extracted_data['relevant_elements']) > 0, f"No relevant elements extracted from {url}")
+                        self.assertTrue(len(extracted_data['form_elements']['forms']) < 100, f"Form extraction from {url} exceeds limit")
 
                 except httpx.HTTPStatusError as e:
                     if e.response.status_code == 503:
